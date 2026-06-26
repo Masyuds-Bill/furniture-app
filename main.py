@@ -39,7 +39,9 @@ class FurnitureParams(BaseModel):
 @app.get("/")
 def home():
     return FileResponse("index.html")
-
+@app.get("/orders")
+def orders_page():
+    return FileResponse("orders.html")
 # 生成家具，同时保存到数据库
 @app.post("/api/generate")
 def generate_furniture(params: FurnitureParams):

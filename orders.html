@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>历史订单</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #f5f5f0;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    h1 { font-size: 24px; color: #1a1a1a; }
+
+    .back-btn {
+      background: none;
+      border: 2px solid #2d5a27;
+      color: #2d5a27;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .back-btn:hover { background: #2d5a27; color: white; }
+
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-id {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    .order-params {
+      display: flex;
+      gap: 24px;
+    }
+
+    .param-item {
+      text-align: center;
+    }
+
+    .param-label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .param-val {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2d5a27;
+    }
+
+    .order-time {
+      font-size: 12px;
+      color: #bbb;
+      text-align: right;
+    }
+
+    .empty {
+      text-align: center;
+      color: #aaa;
+      padding: 60px 0;
+      font-size: 16px;
+    }
+
+    .loading {
+      text-align: center;
+      color: #aaa;
+      padding: 60px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📋 历史订单</h1>
+      <button class="back-btn" onclick="location.href='/'">← 返回配置</button>
+    </div>
+
+    <div id="content">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadOrders() {
+      const content = document.getElementById('content')
+
+      try {
+        const response = await fetch('/api/orders')
+        const orders = await response.json()
+
+        if (orders.length === 0) {
+          content.innerHTML = '<div class="empty">还没有任何订单</div>'
+          return
+        }
+
+        // 最新的订单显示在最上面
+        orders.reverse()
+
+        content.innerHTML = orders.map(order => `
+          <div class="order-card">
+            <div>
+              <div class="order-id">订单 #${order.id}</div>
+              <div class="order-params">
+                <div class="param-item">
+                  <div class="param-label">座面宽度</div>
+                  <div class="param-val">${order['座面宽度']}</div>
+                </div>
+                <div class="param-item">
+                  <div class="param-label">座面深度</div>
+                  <div class="param-val">${order['座面深度']}</div>
+                </div>
+                <div class="param-item">
+                  <div class="param-label">靠背角度</div>
+                  <div class="param-val">${order['靠背角度']}</div>
+                </div>
+                <div class="param-item">
+                  <div class="param-label">腿高</div>
+                  <div class="param-val">${order['腿高']}</div>
+                </div>
+              </div>
+            </div>
+            <div class="order-time">${order['时间']}</div>
+          </div>
+        `).join('')
+
+      } catch (err) {
+        content.innerHTML = '<div class="empty">❌ 加载失败，请确认服务器正在运行</div>'
+      }
+    }
+
+    loadOrders()
+  </script>
+</body>
+</html>
