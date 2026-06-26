@@ -1,0 +1,9 @@
+# 数据库文件
+furniture.db
+
+# Python缓存
+__pycache__/
+*.pyc
+
+# 环境变量文件（以后会用到）
+.env
